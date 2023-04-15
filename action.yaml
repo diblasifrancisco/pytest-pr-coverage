@@ -1,0 +1,24 @@
+name: pytest-pr-coverage
+description: Detects and comment the unconvered lines of a PR. It also reports the percentage covered of the PR.
+author: Francisco Diblasi
+branding:
+  icon: 'thumbs-up'
+  color: 'white'
+inputs:
+  fails-under:
+    description: 'Required percentage of PR coverage, under this number, the GHA fails.'
+    required: true
+    default: '1'
+  github-token:
+    description: 'Github token'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4 
+      with:
+        python-version: 'pypy3.9'
+    - id: run-coverage-report
+      run: python -m entrypoint.py REQUIRED_PERCENTAGE=${{ inputs.fails-under }} GITHUB_ACTION=${{ inputs.github-token }} PR_NUMBER=${{ github.event.pull_request.number }
+      shell: bash
